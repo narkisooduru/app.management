@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -45,12 +48,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.hospitalmanagementsystem.R
 import com.example.hospitalmanagementsystem.navigation.ROUTE_REGISTER
 import com.example.hospitalmanagementsystem.ui.theme.RedPrimary
+import com.example.hospitalmanagementsystem.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(navController: NavController) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val authViewModel = AuthViewModel()  // ✅ ViewModel instance
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -130,6 +137,32 @@ fun LoginScreen(navController: NavController) {
                 cursorColor = Color.White
             )
         )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // ✅ LOGIN BUTTON
+        Button(
+            onClick = {
+                authViewModel.login(
+                    email = email,
+                    password = password,
+                    navController = navController,
+                    context = context
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = RedPrimary)
+        ) {
+            Text(
+                text = "Login",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

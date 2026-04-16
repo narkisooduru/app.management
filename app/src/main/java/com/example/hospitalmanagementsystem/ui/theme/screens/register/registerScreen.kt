@@ -4,57 +4,50 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.hospitalmanagementsystem.R
 import com.example.hospitalmanagementsystem.navigation.ROUTE_LOGIN
 import com.example.hospitalmanagementsystem.ui.theme.RedPrimary
+import com.example.hospitalmanagementsystem.viewmodel.AuthViewModel
 
 @Composable
 fun RegisterScreen(navController: NavController) {
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    var phoneNumber by remember { mutableStateOf("") }  // ✅ fixed variable name
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    val authViewModel: AuthViewModel = viewModel()
+    val context = LocalContext.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -91,11 +84,11 @@ fun RegisterScreen(navController: NavController) {
             modifier = Modifier.padding(top = 4.dp, bottom = 20.dp)
         )
 
+        // Username
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
             label = { Text("Username", color = Color.White) },
-            placeholder = { Text("Please enter username", color = Color.Gray) },
             leadingIcon = {
                 Icon(Icons.Default.Person, contentDescription = null, tint = RedPrimary)
             },
@@ -113,11 +106,11 @@ fun RegisterScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // Email
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email", color = Color.White) },
-            placeholder = { Text("Please enter email", color = Color.Gray) },
             leadingIcon = {
                 Icon(Icons.Default.Email, contentDescription = null, tint = RedPrimary)
             },
@@ -135,11 +128,57 @@ fun RegisterScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // ✅ Phone Number - fixed
+        OutlinedTextField(
+            value = phoneNumber,
+            onValueChange = { phoneNumber = it },
+            label = { Text("Phone Number", color = Color.White) },
+            leadingIcon = {
+                Icon(Icons.Default.Phone, contentDescription = null, tint = RedPrimary)
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = RedPrimary,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Color.White
+            )
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Password
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password", color = Color.White) },
-            placeholder = { Text("Please enter password", color = Color.Gray) },
+            visualTransformation = PasswordVisualTransformation(),
+            leadingIcon = {
+                Icon(Icons.Default.Lock, contentDescription = null, tint = RedPrimary)
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = RedPrimary,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Color.White
+            )
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Confirm Password
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text("Confirm Password", color = Color.White) },
             visualTransformation = PasswordVisualTransformation(),
             leadingIcon = {
                 Icon(Icons.Default.Lock, contentDescription = null, tint = RedPrimary)
@@ -159,7 +198,17 @@ fun RegisterScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = {},
+            onClick = {
+                authViewModel.signup(
+                    username = username,
+                    email = email,
+                    phoneNumber = phoneNumber,
+                    password = password,
+                    confirmPassword = confirmPassword,
+                    navController = navController,
+                    context = context
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -179,13 +228,11 @@ fun RegisterScreen(navController: NavController) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Already registered? ",
-                color = Color.White,
-                fontSize = 14.sp
+                color = Color.White
             )
             Text(
                 text = "Log in here",
                 color = RedPrimary,
-                fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable {
