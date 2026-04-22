@@ -5,11 +5,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.hospitalmanagementsystem.screens.patient.PatientListScreen
+import com.example.hospitalmanagementsystem.ui.theme.screens.SplashScreen
 import com.example.hospitalmanagementsystem.ui.theme.screens.dashboard.DashboardScreen
 import com.example.hospitalmanagementsystem.ui.theme.screens.login.LoginScreen
+import com.example.hospitalmanagementsystem.ui.theme.screens.patient.AddPatient
+import com.example.hospitalmanagementsystem.ui.theme.screens.patient.PatientListScreen
+import com.example.hospitalmanagementsystem.ui.theme.screens.patient.UpdatePatientScreen
 import com.example.hospitalmanagementsystem.ui.theme.screens.register.RegisterScreen
-import patient.AddPatient
+import patient.UpdatePatientScreen
 
 @Composable
 fun AppNavHost(
@@ -21,6 +24,8 @@ fun AppNavHost(
         composable(ROUTE_LOGIN) { LoginScreen(navController) }
         composable(ROUTE_DASHBOARD) { DashboardScreen(navController) }
         composable(ROUTE_ADD_PATIENT) { AddPatient(navController) }
-        composable(ROUTE_VIEWPATIENT) { PatientListScreen(navController) }
+        composable(ROUTE_PATIENT_LIST) { PatientListScreen(navController) }
+        composable(ROUTE_SPLASH){ SplashScreen(navController) }
+        composable(ROUTE_UPDATE_PATIENT){ UpdatePatientScreen(navController)}
     }
 }

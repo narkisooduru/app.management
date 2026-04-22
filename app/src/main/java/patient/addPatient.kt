@@ -1,9 +1,8 @@
-package patient
+package com.example.hospitalmanagementsystem.ui.theme.screens.patient
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -17,15 +16,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.example.hospitalmanagementsystem.data.PatientViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPatient(
     navController: NavHostController
 ) {
-
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var name by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -69,10 +68,9 @@ fun AddPatient(
                     .align(Alignment.CenterHorizontally),
                 contentAlignment = Alignment.Center
             ) {
-
                 if (imageUri != null) {
-                    Image(
-                        painter = rememberAsyncImagePainter(imageUri),
+                    AsyncImage(
+                        model = imageUri,
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -97,42 +95,54 @@ fun AddPatient(
                 value = name,
                 onValueChange = { name = it },
                 label = { Text("Name") },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             )
 
             OutlinedTextField(
                 value = age,
                 onValueChange = { age = it },
                 label = { Text("Age") },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             )
 
             OutlinedTextField(
                 value = phone,
                 onValueChange = { phone = it },
                 label = { Text("Phone") },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             )
 
             OutlinedTextField(
                 value = illness,
                 onValueChange = { illness = it },
                 label = { Text("Illness") },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             )
 
             OutlinedTextField(
                 value = gender,
                 onValueChange = { gender = it },
                 label = { Text("Gender") },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             )
 
             OutlinedTextField(
                 value = dateOfVisit,
                 onValueChange = { dateOfVisit = it },
                 label = { Text("Date of Visit") },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             )
 
             Spacer(modifier = Modifier.size(20.dp))
@@ -155,6 +165,6 @@ fun AddPatient(
             ) {
                 Text("Save Patient")
             }
-            }
         }
     }
+}

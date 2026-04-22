@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.hospitalmanagementsystem.models.PatientModels
 import com.example.hospitalmanagementsystem.navigation.ROUTE_DASHBOARD
+import com.example.hospitalmanagementsystem.navigation.ROUTE_PATIENT_LIST
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,13 +25,13 @@ import java.io.InputStream
 class PatientViewModel : ViewModel() {
 
     private val cloudinaryUrl =
-        "https://api.cloudinary.com/v1_1/dm8wfbxcldm8wfbxcl/image/upload"
+        "https://api.cloudinary.com/v1_1/dm8wfbxcl/image/upload"
 
     private val uploadPreset = "image_folder"
 
-    // ✅ Moved to the correct class level
     private val _patients = mutableStateListOf<PatientModels>()
     val patients: List<PatientModels> = _patients
+
 
     fun uploadPatient(
         imageUri: Uri?,
@@ -45,6 +46,7 @@ class PatientViewModel : ViewModel() {
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
                 val imageUrl = imageUri?.let {
                     uploadToCloudinary(context, it)
                 }
@@ -67,19 +69,30 @@ class PatientViewModel : ViewModel() {
                 ref.setValue(patientData).await()
 
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Patient saved successfully", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "Patient saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+
                     navController.navigate(ROUTE_DASHBOARD)
                 }
 
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Failed to save patient", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "Failed to save patient",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
     }
 
+
     private fun uploadToCloudinary(context: Context, uri: Uri): String {
+
         val inputStream: InputStream = context.contentResolver
             .openInputStream(uri)
             ?: throw Exception("Cannot open image")
@@ -116,23 +129,91 @@ class PatientViewModel : ViewModel() {
         return secureUrl ?: throw Exception("Image URL not found")
     }
 
-    // ✅ fetchPatients is now at the correct level inside the single class
+
     fun fetchPatients(context: Context) {
-        val ref = FirebaseDatabase.getInstance().getReference("Patients")
+        val ref = FirebaseDatabase.getInstance()
+            .getReference("Patients")
 
         ref.get()
             .addOnSuccessListener { snapshot ->
+
                 _patients.clear()
+
                 for (child in snapshot.children) {
                     val patient = child.getValue(PatientModels::class.java)
+
                     patient?.let {
-                        it.id = child.key
+                        it.id = child.key ?: ""
                         _patients.add(it)
                     }
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Failed to load patients", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    "Failed to load patients",
+                    Toast.LENGTH_LONG
+                ).show()
             }
+    }
+
+    // ✅ FIXED FUNCTION ONLY (rest unchanged)
+    fun updatePatient(
+        patientId: String,
+        imageUri: Uri?,
+        name: String,
+        age: String,
+        illness: String,
+        phone: String,
+        context: Context,
+        navController: NavController
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+                val imageUrl = imageUri?.let {
+                    uploadToCloudinary(context, it)
+                }
+
+                val updatePatient = mutableMapOf<String, Any>(
+                    "id" to patientId,
+                    "name" to name,
+                    "age" to age,
+                    "phone" to phone,
+                    "illness" to illness
+                )
+
+                imageUrl?.let {
+                    updatePatient["imageUrl"] = it
+                }
+
+                val ref = FirebaseDatabase.getInstance()
+                    .getReference("Patients") // fixed
+                    .child(patientId)
+
+                ref.updateChildren(updatePatient).await()
+
+                fetchPatients(context)
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "patient updated successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    navController.navigate(ROUTE_PATIENT_LIST)
+                }
+
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Failed to update patient",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 }

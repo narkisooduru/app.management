@@ -1,4 +1,4 @@
-package com.example.hospitalmanagementsystem.screens.patient
+package com.example.hospitalmanagementsystem.ui.theme.screens.patient
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

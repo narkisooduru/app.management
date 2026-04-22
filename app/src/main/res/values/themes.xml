@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.HospitalManagementSystem" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Base app theme (SAFE + ALWAYS WORKS) -->
+    <style name="Theme.HospitalManagementSystem" parent="Theme.AppCompat.DayNight.NoActionBar">
+
+        <!-- Splash screen background -->
+        <item name="android:windowSplashScreenBackground">@color/white</item>
+
+        <!-- Splash logo -->
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/logo</item>
+
+        <!-- Icon background -->
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/white</item>
+
+        <!-- After splash theme -->
+        <item name="postSplashScreenTheme">@style/Theme.HospitalManagementSystem</item>
+
+    </style>
+
 </resources>
